@@ -1,0 +1,217 @@
+/****Astyle***/
+.Astyle {
+}
+
+.Astyle-logo {
+    width: 500px;
+    margin: 0 auto;
+}
+
+.Astyle-logo label {
+    width: 100%;
+    height: 200px;
+    display: block;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: auto 80%;
+    cursor: pointer;
+    margin: 0 0 20px;
+    border-bottom: 1px solid #cccccc;
+    box-shadow: 0 1px #e6e6e6;
+}
+
+.Astyle-item {
+    display: table;
+    width: 100%;
+    margin: 20px 0;
+    padding: 20px 0;
+    border-bottom: 1px solid #cccccc;
+    box-shadow: 0 1px #e6e6e6;
+}
+
+.Astyle-item > span {
+    display: block;
+    float: left;
+    width: 100%;
+    font-size: 17px;
+    margin-bottom: 10px;
+    font-weight: 900;
+}
+
+.Astyle-content {
+    float: right;
+    width: 50%;
+}
+
+.Astyle-setting {
+    float: left;
+    width: 400px;
+}
+
+.Item-group {
+    display: block;
+    border-bottom: 1px solid #cccccc;
+    box-shadow: 0 1px #e6e6e6;
+    overflow: hidden;
+    transition: all .3s;
+}
+
+.Astyle-setting .Item-group > span {
+    font-weight: 700;
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    position: relative;
+    cursor: pointer;
+}
+
+.Astyle-setting .Item-group.close > span:before {
+    content: "+";
+    position: absolute;
+    height: 100%;
+    right: 0;
+    top: 0;
+    font-size: 20px;
+}
+
+.Astyle-setting .Item-group.close {
+    height: 30px !important;
+}
+
+.Astyle-setting .Item-group .Item {
+    margin-left: 20px;
+    width: calc(100% - 20px);
+}
+
+.Astyle-setting .Item-group .Item span {
+    width: 150px;
+}
+
+.Astyle-setting .Item-group .Item figure {
+    width: calc(100% - 150px);
+}
+
+.Astyle-setting .Item {
+    display: table;
+    width: 100%;
+    margin: 5px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #cccccc;
+    box-shadow: 0 1px #e6e6e6;
+}
+
+.Astyle-setting .Item:last-child {
+    border-bottom: none;
+    box-shadow: none;
+}
+
+.Astyle-setting .Item > span {
+    display: inline-block;
+    vertical-align: top;
+    width: 170px;
+}
+
+.Astyle-setting .Item figure {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    width: calc(100% - 170px);
+    text-align: right;
+}
+
+.Astyle-setting .Item figure > div {
+}
+
+.colorPicker {
+    width: 25px;
+    height: 25px;
+    margin: 0 5px !important;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    color: transparent !important;
+}
+
+.style-range {
+    width: 100%;
+}
+
+/*******************************/
+.Astyle_custom_block {
+    display: table;
+    width: 100%;
+}
+
+.Astyle_custom_block .Astyle-item {
+    display: inline-block;
+    padding: 10px;
+    vertical-align: top;
+    width: calc(25% - 21px);
+    border-right: 1px solid #cccccc;
+    border-bottom: none;
+    box-shadow: 1px 0px #e6e6e6;
+}
+
+.Astyle_custom_block .Astyle-item:nth-child(4) {
+    border: none;
+    box-shadow: none;
+}
+
+.Astyle_custom_block .Astyle-setting, .Astyle_custom_block .Astyle-content {
+    float: none;
+    width: 100%;
+    display: block;
+}
+
+.Astyle_custom_block .Astyle-content {
+    text-align: center;
+    padding: 25px 0;
+    position: relative;
+}
+
+.Astyle_custom_block .Astyle-content:before, .Astyle_custom_block .Astyle-content:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 0;
+    left: 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.Astyle_custom_block .Astyle-content:before {
+    top: 0;
+}
+
+.Astyle_custom_block .Astyle-content:after {
+    bottom: 0;
+}
+
+/*********************************/
+input[type=range].style-range {
+    -webkit-appearance: none;
+    border-radius: 5px;
+    background: rgb(255, 255, 255);
+    border: 1px solid #bfbfbf;
+}
+
+input[type=range].style-range:focus {
+    outline: none;
+}
+
+input[type=range].style-range::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+input[type=range].style-range::-webkit-slider-thumb {
+    height: 20px;
+    width: 10px;
+    border-radius: 10px;
+    background: #292c31;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6px;
+}

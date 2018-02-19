@@ -1,0 +1,21 @@
+{
+	"id"   : "TrashBinView_1",
+	"name" : "TrashBinView",
+	"desc" : "Просотр мусорной корзины",
+	"logo" : "logo.png",
+	"menu" :  {
+	    "title": "Мусорная корзина",
+	    "link": "TrashBinView",
+	    "icon": "icon-trash",
+	    "access": ["1"],
+	    "parrent": "false"
+    },
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "TrashBinView/TrashBinView.class.php"
+		},
+		"tpl" : {
+			"admin/main.tpl" : "TrashBinView/main.tpl"
+		}
+	}
+}

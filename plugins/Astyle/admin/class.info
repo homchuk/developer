@@ -1,0 +1,31 @@
+<?php
+
+class Astyle extends Core {
+	
+	function __construct(){
+		$mod = "";
+		if(isset($_GET['mod'])){$mod = $_GET['mod'];}
+		if($mod == "logo"){
+			if(isset($_FILES['logo']) && $_FILES['logo']['error']==0) {
+				if(is_uploaded_file($_FILES['logo']['tmp_name'])) {
+					$exp = explode("/", $_FILES['logo']['type']);
+					$type = end($exp);
+					$path = "uploads/admin/site-logo.svg";
+					move_uploaded_file($_FILES['logo']['tmp_name'], ROOT_PATH.$path);
+				}
+			}
+			templates::assign_var("site-logo", FileDefault("logo-admin", "uploads/admin/site-logo.svg"));
+			templates::assign_var("logo", "true");
+		}else{
+			templates::assign_var("logo", "false");
+		}
+		if($mod == "save"){
+			if(sizeof($_POST)>0){
+				$css = $_POST["css"];
+				file_put_contents(ROOT_PATH.ADMINCP_DIRECTORY."/assets/css/css-admin.css",$css);
+				die();
+			}
+		}
+		$this->Prints("Astyle/main");
+	}
+}

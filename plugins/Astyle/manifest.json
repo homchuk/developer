@@ -1,0 +1,44 @@
+{
+	"id"   : "Astyle_1",
+	"name" : "Astyle",
+	"desc" : "Стилизация админ панеле",
+	"logo" : "logo.png",
+	"menu" :  {
+	    "title": "Кастомайз",
+	    "link": "",
+	    "icon": "fa-dashboard",
+	    "access": [
+	      "1"
+	     ],
+	    "parrent": [
+	      {
+	        "title": "Стилизация",
+	        "link": "Astyle",
+	        "icon": "fa-tag",
+	        "access": [
+	          "1"
+	         ]
+	       },
+	      {
+	        "title": "Логотип",
+	        "link": "Astyle&mod=logo",
+	        "icon": "fa-tag",
+	        "access": [
+	          "1"
+	         ]
+	       }
+	     ]
+   },
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "Astyle/Astyle.class.php"
+		},
+		"tpl" : {
+			"admin/main.tpl" : "Astyle/main.tpl"
+		},
+		"resources" : {
+			"admin/resources/style.css" : "Astyle/style.css",
+			"admin/resources/processing.js" : "Astyle/processing.js"
+		}
+	}
+}

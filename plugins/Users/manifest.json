@@ -1,0 +1,24 @@
+{
+	"id"   : "Users_1",
+	"name" : "Users",
+	"desc" : "Управления пользователями админ панели",
+	"logo" : "logo.png",
+	"menu" :  {
+	    "title": "Пользователи",
+	    "link": "Users",
+	    "icon": "fa-user",
+	    "access": ["1"],
+	    "parrent": "false"
+    },
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "Users/Users.class.php"
+		},
+		"tpl" : {
+			"admin/main.tpl" : "Users/main.tpl"
+		},
+		"resources" : {
+			"admin/resources/style.css" : "Users/style.css"
+		}
+	}
+}

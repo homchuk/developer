@@ -1,0 +1,224 @@
+<?php
+class News extends Core {
+	
+	function __construct(){
+		
+		$LANG_SETTING = FileDB::open(PATH_CACHE_LANGS."lang.setting.db.php",true);
+		$NEWS_SETTING = FileDB::open("news.setting");
+
+		$NEWS_SETTING = Extra::ClearJSON($NEWS_SETTING);
+		$SETTING      = array();
+		
+		$lang         = $LANG_SETTING["init"];
+		$LangSelect   = $LANG_SETTING["select"];
+		$Search       = "";
+		$mod          = "";
+		
+		if(isset($_GET['mod']))
+		{
+			$mod = $_GET['mod'];
+		}
+		if(isset($_GET['lang']) && $NEWS_SETTING["lang"] == true)
+		{
+			$lang = $_GET['lang'];
+		}
+		if(isset($_GET['Search']) && $NEWS_SETTING["categories"] == true)
+		{
+			$Search = "WHERE `cat` = ".$_GET['Search'];
+		}
+
+		$SETTING["mod"] 		   = $mod;
+		$SETTING["lang"] 		   = $lang;
+		$SETTING["langInit"]       = ($NEWS_SETTING["lang"]===true ? "true" : "false");
+		$SETTING["setDateInit"]    = ($NEWS_SETTING["setDate"]===true ? "true" : "false");
+		$SETTING["categoriesInit"] = ($NEWS_SETTING["categories"]===true ? "true" : "false");
+		$SETTING["SETTING"] = json_encode($SETTING,JSON_UNESCAPED_UNICODE);
+		templates::assign_vars($SETTING);
+		///// CATEGORIES
+		$row = db::doquery("SELECT * FROM `categories` WHERE `page` = 'news' ", true);
+		while($row = db::fetch_assoc())
+		{
+			if($NEWS_SETTING["lang"] == true)
+			{
+				$row["title"] = Extra::DataLang($row["title"], $lang);
+			}
+			templates::assign_vars($row, "categories", $row["id"]);
+		}
+		////////////////
+		if($mod=="setting")
+		{
+			$SETTING_LIST["lang"] 		= ($NEWS_SETTING["lang"]===true ? "true" : "false");
+			$SETTING_LIST["categories"] = ($NEWS_SETTING["categories"]===true ? "true" : "false");
+			$SETTING_LIST["setDate"] 	= ($NEWS_SETTING["setDate"]===true ? "true" : "false");
+			
+			$SETTING_LIST["resize_init"] 	= ($NEWS_SETTING["resize"]["init"]===true ? "true" : "false");
+			$SETTING_LIST["resize_width"] 	= $NEWS_SETTING["resize"]["width"];
+			$SETTING_LIST["resize_height"] 	= $NEWS_SETTING["resize"]["height"];
+			templates::assign_vars($SETTING_LIST);
+			if(isset($_GET["action"]) && $_GET["action"] == "save")
+			{
+				if(isset($_POST["datas"]))
+				{
+					$NEWS_SETTING = $_POST["datas"];
+					FileDB::save("news.setting",$NEWS_SETTING);
+				}
+				return;
+				die();
+			}
+			$this->Prints("news/setting",true);
+			return;
+			die();
+		}
+		if($mod=="add" || $mod=="edit")
+		{
+			$DataRow = array(
+								"id" 		=> false,
+								"translit"  => false,
+								"title" 	=> false,
+								"desc" 		=> false,
+								"images" 	=> false,
+								"date" 		=> false,
+								"autor"		=> false,								
+								"cat" 		=> false
+						);
+			$id = 0;
+			if($NEWS_SETTING["lang"] == true)
+			{
+				for($i=0; $i < count($LANG_SETTING["select"]); $i++)
+				{
+					$LANG_NEWS["id"] 		= $i + 1;
+					$LANG_NEWS["lang"] 		= $LANG_SETTING["select"][$i];
+					$LANG_NEWS["select"] 	= "false";
+					if($lang == $LANG_SETTING["select"][$i])
+					{
+						$LANG_NEWS["select"] = "true";
+					}
+					templates::assign_vars($LANG_NEWS, "LANG_NEWS", $LANG_NEWS['id']);
+				}
+			}
+			if($mod == "edit"){
+				if(isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0)
+				{
+					$id = $_GET['id'];
+					$row = db::doquery("SELECT * FROM `news` WHERE `id` = ".$id);
+					$DataRow = $row;		
+					if($row == NULL)
+					{
+						location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=News");
+					    return;
+					}
+				}
+				else
+				{
+					location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=News");
+		   			return;
+				}
+			}
+			if(sizeof($_POST)>0)
+			{
+				if($mod == "add")
+				{
+					$DataRow["id"] 			= db::last_id("news");
+					$DataRow["translit"] 	= Extra::translit($_POST["title"]);
+					$DataRow["autor"] 		= User::get('username');
+					if(!$NEWS_SETTING["setDate"])
+					{
+						$DataRow["date"] = time();
+					}
+				}
+				if($NEWS_SETTING["setDate"])
+				{
+					$DataRow["date"] = ((int)$_POST["date"] / 1000);
+				}
+				if($NEWS_SETTING["lang"] == true)
+				{
+					if($mod == "add")
+					{
+						$title = array();
+						$desc  = array();
+						for($i=0; $i < count($LANG_SETTING["select"]); $i++)
+						{
+							$title[$LANG_SETTING["select"][$i]] = $_POST["title"];
+							$desc[$LANG_SETTING["select"][$i]]  = $_POST["desc"];
+						}
+					}
+					else
+					{
+						$title[$lang]  = $_POST["title"];
+						$desc[$lang]   = $_POST["desc"];
+					}
+					$DataRow["title"]  = json_encode($title, JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+					$DataRow["desc"]   = json_encode($desc, JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+				}
+				else
+				{
+					$DataRow["title"]  = $_POST["title"];
+					$DataRow["desc"]   = $_POST["desc"];
+				}
+				if($NEWS_SETTING["categories"] == true)
+				{
+					$DataRow["cat"]    = $_POST["cat"];
+				}
+				# загрузка изображения
+				$images = Upload::Images("images",$DataRow["id"],'uploads/news');
+				if($images !== false)
+				{
+					$DataRow["images"] = $images;
+				}
+				if($mod == "add")
+				{
+					db::doquery("INSERT INTO `news` SET ".Extra::SqlSet($DataRow));
+				}
+				if($mod == "edit")
+				{
+					db::doquery("UPDATE `news` SET ".Extra::SqlSet($DataRow)." WHERE `id` = ".$id);
+				}
+				location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=news");
+				return;
+				die();
+			}
+			if($mod == "edit"){
+				if($NEWS_SETTING["lang"] == true)
+				{
+					$DataRow["title"] = Extra::DataLang($DataRow["title"], $lang);
+					$DataRow["desc"] = Extra::DataLang($DataRow["desc"], $lang);
+				}
+			}
+			if($mod == "add"){
+				$DataRow["date"] = time();
+			}
+			$DataRow["images"] = FileDefault("no-images", $DataRow["images"]);
+			templates::assign_vars($DataRow);
+			$this->Prints("news/edit");
+			return;
+		}
+	    if($mod=="delete" && isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0)
+		{
+			$id = intval($_GET['id']);
+			# отправка данных в корзину
+			$DataRow = db::doquery("SELECT * FROM `news` WHERE `id` = ".$id);
+			$name = $DataRow["title"];
+			if($NEWS_SETTING["lang"] == true)
+			{
+				$name = Extra::DataLang($name, $lang);
+			}
+			TrashBin::add("(новость) ".$name,$DataRow,"news");
+			db::doquery("DELETE FROM `news` WHERE `id` = ".$id);
+			location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=news");
+			return;
+		}
+		////////////////
+		$row = db::doquery("SELECT * FROM news ".$Search, true);
+		while($row = db::fetch_array())
+		{
+			if($NEWS_SETTING["lang"] == true)
+			{
+				$row["title"] = Extra::DataLang($row["title"], $lang);
+			}
+			templates::assign_vars($row, "news", $row['id']);
+		}
+		$this->Prints("news/main");
+	}
+
+}
+?>

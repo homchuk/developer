@@ -1,0 +1,151 @@
+/****Amenu***/
+.AmenuBlock{
+	width: 500px;
+	display: block;
+	margin: 0 auto;
+}
+.Amenu,
+.Amenu > div {
+    display: block;
+}
+.Amenu-content {
+ 
+}
+.Amenu-content .Item,
+.cell-menu-list {
+    display: block;
+    position: relative;
+    width: 500px;
+    height: 30px;
+    background-color: #fff;
+    margin: 0 0 5px;
+    user-select: none;
+}
+.cell-menu-list.list-children,
+.Amenu-content .Item.list-children{
+	margin-left: 40px;
+	width: 460px;
+}
+.Amenu-content .Item > * {
+    position: absolute;
+    margin: 0;
+    height: 100%;
+    top: 0;
+    line-height: 30px;
+}
+.Amenu-content .Item p {
+    display: block;
+    left: 0;
+    padding: 0 40px;
+    font-size: 15px;
+}
+.Amenu-content .Item i {
+    left: 0;
+    width: 30px;
+    text-align: center;
+    font-size: 20px;
+}
+.Amenu-content .Item .menu-move {
+    left: 0;
+    width: calc(100% - 70px);
+    cursor: -webkit-grab;
+}
+.Amenu-content .Item .menu-edit, .Amenu-content .Item .menu-del {
+    color: #fff;
+    cursor: pointer;
+    font-family: 'FontAwesome';
+    width: 30px;
+    text-align: center;
+    font-size: 20px;
+}
+.Amenu-content .Item .menu-edit {
+    right: 35px;
+    background-color: #259e29;
+}
+.Amenu-content .Item .menu-edit:before {
+    content: "\f044";
+}
+.Amenu-content .Item .menu-del {
+    right: 0;
+    background-color: #c50606;
+}
+.Amenu-content .Item .menu-del:before {
+    content: "\f00d";
+}
+.Amenu-Setting {
+
+}
+.Amenu-Setting > div {
+    margin: 0;
+}
+.Amenu-Setting table {
+    width: 100%;
+}
+.Amenu-Setting table td {
+    font-size: 14px;
+}
+.Amenu-Setting table td:first-child {
+}
+.Amenu-access {
+    display: block;
+}
+.Amenu-access .Item {
+    display: table;
+    width: 100%;
+}
+.Amenu-access .Item p {
+    display: inline-block;
+}
+.Amenu-access .Item input {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 10px 0 0;
+}
+.Amenu-Setting button {
+    margin: 0;
+}
+#Amenu-Setting-Icon {
+    display: block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+.Amenu-content .Item.focus{
+	position: fixed;
+	z-index: 101;
+	margin: 0;
+}
+#LB-Icon > .LB-article{
+	width: 80%;
+    height: calc(100% - 100px);
+    margin: 30px auto;
+    display: block;
+    overflow: scroll;
+}
+.menu-icon-content{
+	display: table;
+width: 100%;
+}
+.menu-icon-content figure{
+	display: inline-block;
+    vertical-align: top;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all .5s ease;
+}
+.menu-icon-content figure:hover{
+	box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.1);
+}
+.menu-icon-content figure i{
+	display: block;
+    text-align: center;
+    line-height: 50px;
+    font-size: 30px;
+}
+/*******************************/
+/*******************************/

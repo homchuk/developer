@@ -1,0 +1,57 @@
+{
+	"id"   : "News_1",
+	"name" : "news",
+	"desc" : "модуль создания новостей, для использования категорий нужно установить виджет 'категорий'",
+	"logo" : "logo.png",
+	"menu" : {
+	    "title" : "Новости",
+	    "link" : "",
+	    "icon" : "fa-newspaper-o",
+	    "access" : ["1"],
+	    "parrent" : [
+			{
+		        "title" : "Категории",
+		        "link" : "categories&page=news",
+		        "icon" : "",
+		        "access": ["1"]
+	       },
+		   {
+		        "title" : "Новости",
+		        "link" : "news",
+		        "icon" : "",
+		        "access": ["1"]
+	       }
+		]
+     },
+	"class" : {
+		"news.info" : "news.class.php"
+	},
+	"tpl" : "",
+	"sql" : ["
+				CREATE TABLE IF NOT EXISTS `news` (
+				  `id` int(11) NOT NULL AUTO_INCREMENT,
+				  `translit` varchar(255) NOT NULL,
+				  `title` text NOT NULL,
+				  `desc` longtext NOT NULL,
+				  `cat` int(11) NOT NULL,
+				  `images` varchar(255) NOT NULL,
+				  `autor` varchar(255) NOT NULL,
+				  `date` int(15) NOT NULL,
+				   PRIMARY KEY (`id`)
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			"],
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "News/News.class.php"
+		},
+		"tpl" : {
+			"admin/edit.tpl" : "news/edit.tpl",
+			"admin/main.tpl" : "news/main.tpl",
+			"admin/setting.tpl" : "news/setting.tpl"
+		},
+		"resources" : {
+			"admin/resources/style.css" : "news/style.css",
+			"admin/resources/processing.js" : "news/processing.js"
+		}
+	}
+}

@@ -1,0 +1,28 @@
+.upload-img{
+	cursor: pointer;
+}
+.upload-img.active{
+	
+}
+.upload-img img{
+	width: 100%;
+	height: auto;
+}
+.BlockLang{
+	float: left;
+    width: auto;
+}
+.BlockLang a{
+	margin-right: 5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    background-color: #212121;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 30px;
+    display: inline-block;
+    cursor: pointer;
+}

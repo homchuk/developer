@@ -1,0 +1,24 @@
+{
+	"id"   : "Languages_1",
+	"name" : "Languages",
+	"desc" : "переводы на сайте",
+	"logo" : "logo.png",
+	"menu" : {
+	    "title" : "Языки",
+	    "link" : "Languages",
+	    "icon" : "fa-language",
+	    "access" : ["1"],
+	    "parrent" : false
+     },
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "Languages/Languages.class.php"
+		},
+		"tpl" : {
+			"admin/main.tpl" : "Languages/main.tpl"
+		},
+		"resources" : {
+			"admin/resources/style.css" : "Languages/style.css"
+		}
+	}
+}

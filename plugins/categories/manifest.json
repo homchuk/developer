@@ -1,0 +1,32 @@
+{
+	"id"   : "Categories_1",
+	"name" : "categories",
+	"desc" : "модуль создания категорий",
+	"logo" : "",
+	"menu" : {
+	    "title" : "Категории",
+	    "link" : "categories",
+	    "icon" : "fa-newspaper-o",
+	    "access" : ["1"],
+	    "parrent" : "false"
+     },
+	"sql" : ["
+				CREATE TABLE IF NOT EXISTS `categories` (
+				  `id` int(11) NOT NULL AUTO_INCREMENT,
+				  `translit` varchar(255) NOT NULL,
+				  `page` varchar(255) NOT NULL,
+				  `title` text NOT NULL,
+				   PRIMARY KEY (`id`)
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			"],
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "Categories/Categories.class.php"
+		},
+		"tpl" : {
+			"admin/edit.tpl" : "categories/edit.tpl",
+			"admin/main.tpl" : "categories/main.tpl",
+			"admin/setting.tpl" : "categories/setting.tpl"
+		}
+	}
+}

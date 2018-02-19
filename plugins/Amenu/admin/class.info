@@ -1,0 +1,65 @@
+<?php
+
+class Amenu extends Core {
+	
+	function __construct(){
+		
+		$puch = ROOT_PATH.ADMINCP_DIRECTORY.DS."menu".DS."menu.db.php";
+		$mod = "";
+		
+		if(isset($_GET['mod']))
+		{
+			$mod = $_GET['mod'];
+		}
+		
+		if($mod == "icons")
+		{
+			$file  = file_get_contents(ROOT_PATH.ADMINCP_DIRECTORY."/assets/css/fonts/fontawesome/css/font-awesome.css");
+			$file_ = file_get_contents(ROOT_PATH.ADMINCP_DIRECTORY."/assets/css/fonts/icon/icon.css");
+			
+			preg_match_all("#\.fa-(.+?)\:before#", $file, $arr);
+			preg_match_all("#\.icon-(.+?)\:before#", $file_, $arr_);
+			
+			$arr  = $arr[1];
+			$arr_ = $arr_[1];
+			$ret = '<div class="menu-icon-content" >';
+			
+			for($i=0;$i<sizeof($arr);$i++)
+			{
+				$ret .= '<figure data-icon="fa-'.$arr[$i].'" ><i class="fa-'.$arr[$i].'"></i></figure>';
+			}
+			for($i=0;$i<sizeof($arr_);$i++)
+			{
+				$ret .= '<figure data-icon="icon-'.$arr_[$i].'" ><i class="icon-'.$arr_[$i].'"></i></figure>';
+			}
+			
+			$ret .= '</div>';
+			echo($ret);
+			die();
+		}
+		
+		if($mod == "save")
+		{
+			if(sizeof($_POST)>0)
+			{
+				$MENU_DB = $_POST["Menu"];
+				FileDB::save($puch,$MENU_DB,true);
+				die();
+			}
+		}
+		
+		$MENU_DB   = FileDB::open($puch,true);
+		$USER_FILE = FileDB::open("users");
+		if(count($USER_FILE) > 0)
+		{
+			foreach($USER_FILE as $key => $value)
+			{
+				$value["id"]    = $key;
+				$value["level"] = $LevelArr[$value["level"]];
+				templates::assign_vars($value, "UserBlock", $value["id"]);
+			}
+		}
+		templates::assign_var("MENU_DB", json_encode($MENU_DB, JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE));
+		$this->Prints("Amenu/main");
+	}
+}

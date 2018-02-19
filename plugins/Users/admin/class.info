@@ -1,0 +1,90 @@
+<?php
+
+class Users extends Core {
+	
+	function __construct(){
+		
+		$mod = "";
+		if(isset($_GET['mod'])){$mod = $_GET['mod'];}
+		templates::assign_var("mod", $mod);
+		$USER_FILE = FileDB::open("users");
+		$LevelArr = array(0 => "LEVEL_GUEST", 1 => "LEVEL_USER", 2 => "LEVEL_MODER", 3 => "LEVEL_ADMIN", 4 => "LEVEL_CUSTOMER", 5 => "LEVEL_CREATOR");
+		if($mod=="Add" || $mod=="Edit"){
+			$USER_DATA = array("avatar" => "","username" => "","pass" => "","admin_pass" => "","level" => "","email" => "","activ" => "", "date" => "", "light" => "");
+			if(!isset($USER_FILE)){
+				$USER_FILE = array();
+			}
+			if($mod == "Edit"){
+				if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
+					return false;
+				}
+				$id = intval($_GET['id']);
+			}
+			if($mod == "Add"){
+				$id = 1;
+				if(count($USER_FILE)>0){
+					$id = array_keys($USER_FILE);
+					$id = end($id)+1;
+				}
+			}
+			if(sizeof($_POST)>0){
+				$username = $_POST["username"];
+				$pass = $_POST["pass"];
+				$level = $_POST["level"];
+				$email = $_POST["email"];
+				$activ = $_POST["activ"];
+				if(isset($_FILES['avatar']['name'])){
+				    $exp = explode("/", $_FILES['avatar']['type']);
+					$type = end($exp);
+					$path = "uploads".DS."user-avatar".DS.$id.".".$type;
+					if(move_uploaded_file($_FILES['avatar']['tmp_name'], ROOT_PATH.$path)){
+						$Images = $path;
+					}
+				}
+				if($mod == "Add"){
+					$date = time();
+				}else{
+					$date = $USER_FILE[$id]["date"];
+				}
+				$USER_DATA["username"] = $username;
+				$USER_DATA["light"] = $pass;
+				$USER_DATA["pass"] = User::create_pass($pass);
+				$USER_DATA["admin_pass"] = cardinal::create_pass($pass);
+				$USER_DATA["level"] = $level;
+				$USER_DATA["email"] = $email;
+				$USER_DATA["activ"] = $activ;
+				$USER_DATA["date"] = time();
+				$USER_DATA["id"] = $id;
+			    $USER_FILE[$id] = $USER_DATA;
+			    FileDB::save("users",$USER_FILE);
+			    location("{C_default_http_host}admin/?pages=Users");
+			    return;
+			}
+			if($mod == "Edit"){
+				templates::assign_vars($USER_FILE[$id]);
+			}
+			if($mod == "Add"){
+				templates::assign_vars($USER_DATA);
+			}
+			templates::assign_var("view", "false");
+			$this->Prints("Users/main");
+			return;
+		}
+		if($mod=="Delete" && isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0) {
+			$id = intval($_GET['id']);
+			unset($USER_FILE[$id]);
+			FileDB::save("users",$USER_FILE);
+			location("{C_default_http_host}admin/?pages=Users");
+			return;
+		}
+		if(count($USER_FILE) > 0){
+			foreach($USER_FILE as $key => $value){
+				$value["id"] = $key;
+				$value["level"] = $LevelArr[$value["level"]];
+				templates::assign_vars($value, "UserBlock", $value["id"]);
+			}
+		}
+		templates::assign_var("view", "true");
+		$this->Prints("Users/main");
+	}
+}

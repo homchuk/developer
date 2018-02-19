@@ -1,0 +1,164 @@
+/****LANG***/
+.InitLang {
+    display: table;
+    width: 100%;
+}
+.LangContent {
+    width: calc(100% - 250px);
+    float: right;
+}
+.LangItem {
+    display: inline-block;
+    width: 188px;
+    padding: 110px 25px 20px;
+    margin-left: 10px;
+    position: relative;
+}
+.LangItem:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20px;
+    height: 80px;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+.LangItem span {
+    display: block;
+    text-align: center;
+}
+.LangItem p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+}
+.LangItem [type="radio"] {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    margin: 10px 5px;
+    margin-left: 0;
+    padding: 0;
+}
+.LangItem figure {
+    margin: 0;
+    display: table;
+    width: 100%;
+}
+.LangItem figure * {
+    display: inline-block;
+    width: 50%;
+    padding: 0;
+}
+.AllLanguages {
+    width: 190px;
+    height: 178px;
+    float: left;
+    overflow: scroll;
+}
+.AllLanguages > span {
+    border-bottom: 1px solid #e2e2e2;
+    display: block;
+    padding: 0 0 5px;
+}
+.AllLanguages .Item {
+    display: table;
+    width: 100%;
+    padding: 5px 0;
+    border-bottom: 1px solid #e2e2e2;
+}
+.AllLanguages .Item:last-child {
+    border: none;
+}
+.AllLanguages .Item span {
+    float: left;
+    padding-left: 35px;
+    position: relative;
+    line-height: 30px;
+}
+.AllLanguages .Item span:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.AllLanguages .Item button {
+    float: right;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+}
+.LangSetting {
+    width: 100%;
+}
+.LangSetting > .Panel > *{
+    z-index: 1;
+    position: relative;
+}
+.LangSetting > .Panel:before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-position: 125px 80px;
+    background-repeat: no-repeat;
+    background-size: 150px;
+    z-index: 0;
+    opacity: 0.5;
+}
+.LangSetting table {
+    width: 100%;
+}
+.LangSetting textarea {
+    width: calc(100% - 10px);
+    max-width: calc(100% - 10px);
+    padding: 5px;
+    display: table;
+    margin: 0;
+}
+.LangSetting figure {
+    display: table;
+    margin: 0;
+}
+.LangSetting figure input {
+    margin: 5px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.LangSetting figure > * {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+}
+.LangValue textarea{
+	display: none;
+	width: calc(100% - 22px);
+	padding: 10px;
+	height: 20px;
+	margin: 0;
+	color: #a6a7aa;
+	font-size: 14px;
+	font-weight: 100;
+	font-family: 'Open Sans', sans-serif;
+}
+.LangValue.FastEdit p{
+	display: none;
+}
+.LangValue.FastEdit textarea{
+	display: block;
+}
+/****END_LANG***/

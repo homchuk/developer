@@ -1,0 +1,33 @@
+<?php
+
+class TrashBinView extends Core {
+		
+	function __construct(){
+		
+		$mod = false;
+		
+		if(isset($_GET['mod']) )
+		{
+			$mod = $_GET['mod'];
+		}
+		
+		if($mod == "reestablish" && isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0){
+			TrashBin::reestablish($_GET['id']);
+			location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=TrashBinView");
+		}
+		
+		if($mod == "delete" && isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0){
+			TrashBin::del($_GET['id']);
+			location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=TrashBinView");
+		}
+		
+		$row = db::doquery("SELECT * FROM `trash-bin` ", true);
+		while($row = db::fetch_array())
+		{
+			templates::assign_vars($row, "TrashBin", $row['id']);
+		}
+		
+		$this->Prints("TrashBinView/main");
+	}
+
+}

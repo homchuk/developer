@@ -1,0 +1,25 @@
+{
+	"id"   : "Amenu_1",
+	"name" : "Amenu",
+	"desc" : "Генератор меню в админ панеле",
+	"logo" : "logo.png",
+	"menu" : {
+	    "title": "Меню",
+	    "link": "Amenu",
+	    "icon": "fa-th-large",
+	    "access": ["1"],
+	    "parrent": "false"
+    },
+	"admin" : {
+		"class" : {
+			"admin/class.info" : "Amenu/Amenu.class.php"
+		},
+		"tpl" : {
+			"admin/main.tpl" : "Amenu/main.tpl"
+		},
+		"resources" : {
+			"admin/resources/style.css" : "Amenu/style.css",
+			"admin/resources/processing.js" : "Amenu/processing.js"
+		}
+	}
+}

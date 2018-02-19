@@ -1,0 +1,156 @@
+<?php
+
+class Languages extends Core {
+	
+	function ParseLangTPL(){
+		$Patch = $_SERVER['DOCUMENT_ROOT']."/skins/site/";
+		$filelist = glob($Patch."*.tpl");
+		$fl_array = array();
+		for($i = 0; $i < count($filelist) ; $i++){
+			$File = file_get_contents($filelist[$i]);
+			preg_match_all("#\{L_(\"|')(.+?)(\"|')\}#", $File, $match);
+			if(isset($match[2])){
+				if(is_array($match[2])){
+					foreach ($match[2] as $key => $value) {
+						 if(!in_array($value, $fl_array)){
+						 	array_push($fl_array,$value);
+						 }
+					}
+				}else{
+					 if(!in_array($match[2], $fl_array)){
+						array_push($fl_array, $match[2]);
+					}
+				}
+			}
+		}
+		return $fl_array;
+	}
+	
+	function CreatLang($NLang){
+		$LANG_SETTING = FileDB::open(PATH_CACHE_LANGS."lang.setting.db.php",true);
+		if(substr(sprintf('%o', fileperms(PATH_CACHE_LANGS)), -4) != "0777"){
+			if(!chmod(PATH_CACHE_LANGS, 0777)){
+				echo("Не удалось изменить права доступа");
+			}
+		}
+		if(!file_exists(PATH_CACHE_LANGS."lang-".$LANG_SETTING["init"].".db.php")){
+			$LangData = $this->ParseLangTPL();
+			$f = fopen(PATH_CACHE_LANGS."lang-".$LANG_SETTING["init"].".db.php", "w+");
+			fclose($f);
+			FileDB::save(PATH_CACHE_LANGS."lang-".$LANG_SETTING["init"].".db.php",$LangData,true);
+		}
+		if($LANG_SETTING["init"] != $NLang && file_exists(PATH_CACHE_LANGS."lang-".$LANG_SETTING["init"].".db.php") && !file_exists(PATH_CACHE_LANGS."lang-".$NLang.".db.php")){
+			$LangData = file_get_contents(PATH_CACHE_LANGS."lang".$LANG_SETTING["init"].".db");
+			$file = fopen(PATH_CACHE_LANGS."lang-".$NLang.".db.php", "w+");
+			fclose($file);
+		}
+	}
+	
+	function UpdateLang($action = "",$langSelect,$KeyLang,$StringLang){
+		
+		if(empty($action)){return false;}
+		$LangData = FileDB::open(PATH_CACHE_LANGS."lang-".$langSelect.".db.php",true);
+		if(!$LangData){
+			$LangData = array();
+		}
+		if($action == "add"){
+			$temp_arr = array();
+			$temp_arr[$KeyLang] = $StringLang;
+			$LangData = array_merge($LangData, $temp_arr);
+		}
+		if($action == "edit"){
+			$LangData[$KeyLang] = $StringLang;
+		}
+		if($action == "del"){
+			unset($LangData[$KeyLang]);
+		}
+		FileDB::save(PATH_CACHE_LANGS."lang-".$langSelect.".db.php",$LangData,true);
+	}
+	
+	function __construct(){
+		$path_all_lang = PATH_CACHE_LANGS."all-languages.db.php";
+		$path_lang_setting = PATH_CACHE_LANGS."lang.setting.db.php";
+		$ALL_LANG = FileDB::open($path_all_lang,true);
+		$LANG_SETTING = FileDB::open($path_lang_setting,true);
+		
+		$lang = $LANG_SETTING["init"];
+		if(isset($_GET["lang"]) && !empty($_GET["lang"])){$lang = $_GET["lang"];}
+		
+		if(isset($_GET["LangInit"])){
+			$LANG_SETTING["init"] = $_GET["LangInit"];
+			FileDB::save($path_lang_setting,$LANG_SETTING,true);
+			return false;
+		}
+		
+		if(isset($_GET["LangSelect"])){
+			$NLang = $_GET["LangSelect"];
+			if((!in_array($NLang,$LANG_SETTING["select"]) && $NLang != "none") || isset($_GET["Delete"])){
+				if(!isset($_GET["Delete"])){
+					$this->CreatLang($NLang);
+					array_push($LANG_SETTING["select"], $NLang);
+				}else{
+					if(($key = array_search($NLang, $LANG_SETTING["select"])) !== false){
+						unset($LANG_SETTING["select"][$key]);
+					}
+				}
+				FileDB::save($path_lang_setting,$LANG_SETTING,true);
+				if(!isset($_GET["Delete"])){
+					$return = '<div class="Panel LangItem flag-'.$ALL_LANG[$NLang]["flag"].'">
+								<span>'.$ALL_LANG[$NLang]["title"].'</span>
+								<p><input type="radio" name="LangInit" value="'.$NLang.'">Начальный</p>
+								<figure>
+									<button class="Button DEL DeleteLangItem" >Удалить</button>
+									<a class="Button ADD" href="./?pages=Languages&Lang='.$NLang.'" >Выбрать</a>
+								</figure>
+							  </div>';
+					echo $return;
+				}else{
+					echo "delete";
+				}
+			}
+			return false;
+		}
+
+		if(isset($_GET["CreateLang"]) && !empty($_GET["CreateLang"])){
+			$this->CreatLang($_GET["CreateLang"]);
+			location("{C_default_http_host}admin/?pages=Languages&Lang=".$_GET["CreateLang"]);
+			return false;
+		}
+		
+		if(isset($_GET["UpdateLang"]) && !empty($_GET["UpdateLang"]) && isset($_GET["Lang"])){
+			if(isset($_POST["KeyLang"]) && isset($_POST["StringLang"])){
+				$this->UpdateLang($_GET["UpdateLang"],$_GET["Lang"],$_POST["KeyLang"],$_POST["StringLang"]);
+			}
+			return false;
+		}
+
+		templates::assign_var("LangInit", $LANG_SETTING["init"]);
+		templates::assign_var("FlagInit", $ALL_LANG[$LANG_SETTING["init"]]["flag"]);
+		foreach($ALL_LANG as $name => $datas){
+			$datas["name"] = $name;
+			templates::assign_vars($datas, "AllLanguages", $name);
+		}
+		foreach($LANG_SETTING["select"] as $key){
+			$SelectLang = array();
+			$SelectLang["key"] = $key;
+			$SelectLang["title"] = $ALL_LANG[$key]["title"];
+			$SelectLang["flag"] = $ALL_LANG[$key]["flag"];
+			templates::assign_vars($SelectLang, "SelectLang", $key);
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////
+		templates::assign_var("Lang", $lang);
+		$LangDB = FileDB::open(PATH_CACHE_LANGS."lang-".$lang.".db.php",true);
+		$i = 0;
+		foreach($LangDB as $key => $value){
+			$i++;
+			$LangArr = array();
+			$LangArr["id"] = $i;
+			$LangArr["Key"] = $key;
+			$LangArr["Value"] = $value;
+			templates::assign_vars($LangArr, "LangArr", $i);
+		}
+		$this->Prints("Languages/main");
+	}
+}
+
+?>

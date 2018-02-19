@@ -1,0 +1,167 @@
+<?php
+class Categories extends Core {
+	
+	function __construct(){
+		
+		$LANG_SETTING = FileDB::open(PATH_CACHE_LANGS."lang.setting.db.php",true);
+		$CAT_SETTING  = FileDB::open("categories.setting");
+
+		$CAT_SETTING  = Extra::ClearJSON($CAT_SETTING);
+		$SETTING      = array();
+		
+		$lang         = $LANG_SETTING["init"];
+		$LangSelect   = $LANG_SETTING["select"];
+		$page         = "";
+		$mod          = "";
+		
+		if(isset($_GET['mod']))
+		{
+			$mod = $_GET['mod'];
+		}
+		if(isset($_GET['page']))
+		{
+			$page = $_GET['page'];
+		}
+
+		$SETTING["mod"] 	 = $mod;
+		$SETTING["lang"] 	 = $lang;
+		$SETTING["langInit"] = ($CAT_SETTING["lang"]===true ? "true" : "false");
+		if(!empty($page)){
+			$SETTING["page_add"] = $page;
+		}else{
+			$SETTING["page_add"] = "false";
+		}
+		templates::assign_vars($SETTING);
+		////////////////
+		if($mod=="setting")
+		{
+			$SETTING_LIST["lang"] = ($CAT_SETTING["lang"]===true ? "true" : "false");
+			templates::assign_vars($SETTING_LIST);
+			if(isset($_GET["action"]) && $_GET["action"] == "save")
+			{
+				if(isset($_POST["datas"]))
+				{
+					$CAT_SETTING = $_POST["datas"];
+					FileDB::save("categories.setting",$CAT_SETTING);
+				}
+				return;
+				die();
+			}
+			$this->Prints("categories/setting",true);
+			return;
+			die();
+		}
+		if($mod=="add" || $mod=="edit")
+		{
+			$DataRow = array(
+								"id" 		=> false,
+								"translit"  => false,
+								"title" 	=> false,
+								"page" 		=> false,
+						);
+			$id = 0;
+			if($mod == "edit"){
+				if(isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0)
+				{
+					$id = $_GET['id'];
+					$row = db::doquery("SELECT * FROM `categories` WHERE `id` = ".$id);
+					$DataRow = $row;
+					if($row == NULL)
+					{
+						location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=categories");
+					    return;
+					}
+				}
+				else
+				{
+					location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=categories");
+		   			return;
+				}
+			}
+			if(sizeof($_POST)>0)
+			{
+				if($mod == "add"){
+					$DataRow["id"] = db::last_id("categories");
+					if($CAT_SETTING["lang"] == true){
+						$DataRow["translit"] = Extra::translit($_POST["title"][$lang]);
+					}else{
+						$DataRow["translit"] = Extra::translit($_POST["title"]);
+					}					
+				}
+				$DataRow["page"] = $page;
+				if($CAT_SETTING["lang"] == true){
+					$DataRow["title"] = json_encode($_POST["title"], JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+				}else{
+					$DataRow["title"] = $_POST["title"];
+				}
+				if($mod == "add"){
+					db::doquery("INSERT INTO `categories` SET ".Extra::SqlSet($DataRow));
+				}
+				if($mod == "edit"){
+					db::doquery("UPDATE `categories` SET ".Extra::SqlSet($DataRow)." WHERE `id` = ".$id);
+				}
+				if(!empty($page)){
+					$page = "&page=".$page;
+				}
+				location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=categories".$page);
+				return;
+				die();
+			}
+			///////////
+			if($CAT_SETTING["lang"] == true)
+			{
+				if($mod == "edit")
+				{
+					$title = json_decode($DataRow["title"],true);
+				}
+				for($i=0; $i < count($LANG_SETTING["select"]); $i++)
+				{
+					$CAT_LANG["id"] 		= $i + 1;
+					$CAT_LANG["lang"] 		= $LANG_SETTING["select"][$i];
+					$CAT_LANG["title"]      = "";
+					if($mod == "edit")
+					{
+						$CAT_LANG["title"]  = $title[$CAT_LANG["lang"]];
+					}
+					templates::assign_vars($CAT_LANG, "CAT_LANG", $CAT_LANG['id']);
+				}
+			}
+			/////////////
+			templates::assign_vars($DataRow);
+			$this->Prints("categories/edit");
+			return;
+		}
+	    if($mod=="delete" && isset($_GET['id']) && is_numeric($_GET['id']) && $_GET['id']>0)
+		{
+			$id = intval($_GET['id']);
+			# отправка данных в корзину
+			$DataRow = db::doquery("SELECT * FROM `categories` WHERE `id` = ".$id);
+			$name = $DataRow["title"];
+			if($CAT_SETTING["lang"] == true)
+			{
+				$name = Extra::DataLang($name, $lang);
+			}
+			TrashBin::add("(категория) ".$name,$DataRow,"categories");
+			db::doquery("DELETE FROM `categories` WHERE `id` = ".$id);
+			location("{C_default_http_host}{D_ADMINCP_DIRECTORY}/?pages=categories");
+			return;
+		}
+		////////////////
+		if(!empty($page))
+		{
+			$page = "WHERE `page` = '".$page."'";
+		}
+		$row = db::doquery("SELECT * FROM categories ".$page, true);
+		while($row = db::fetch_array())
+		{
+			if($CAT_SETTING["lang"] == true)
+			{
+				$row["title"] = Extra::DataLang($row["title"], $lang);
+			}
+			templates::assign_vars($row, "categories", $row['id']);
+		}
+		$this->Prints("categories/main");
+	}
+
+}
+?>
